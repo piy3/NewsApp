@@ -31,7 +31,8 @@ function App() {
 
     try {
       const formattedState = formatStateName(state);
-\
+      
+     
       const timer = setInterval(() => {
         setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
       }, 1000);
@@ -58,7 +59,7 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white p-6">
-   
+
       <marquee className="text-lg font-bold text-yellow-400 py-2 w-full">
         🔥 Latest News Updates 🔥 🔥 Latest News Updates 🔥 🔥 Latest News Updates 🔥
       </marquee>
@@ -88,14 +89,13 @@ function App() {
 
       {error && <p className="text-red-400 mt-2">{error}</p>}
 
-  
+    
       {loading && (
         <div className="mt-4 text-center">
           <p className="text-lg font-semibold">Fetching news... ⏳ {countdown}s</p>
         </div>
       )}
 
-    
       {!loading && (
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
           {news.length > 0 ? (
