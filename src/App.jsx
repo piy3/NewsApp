@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 function App() {
   const [state, setState] = useState("");
   const [news, setNews] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(50);
 
   const states = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi",
@@ -24,13 +26,23 @@ function App() {
       return;
     }
     setError("");
+    setLoading(true);
+    setCountdown(50); 
 
     try {
       const formattedState = formatStateName(state);
+\
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+
       const response = await axios.get(
         `https://news-app-3-bu1s.onrender.com/get_news?state=${formattedState}`
       );
 
+      clearInterval(timer); 
+      setLoading(false);
+      
       if (Array.isArray(response.data)) {
         setNews(response.data);
       } else {
@@ -39,13 +51,14 @@ function App() {
       }
     } catch (err) {
       setError("Failed to fetch news.");
+      setLoading(false);
       console.error(err);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-gray-900 to-gray-700 text-white p-6">
-      {/* Marquee for breaking news */}
+   
       <marquee className="text-lg font-bold text-yellow-400 py-2 w-full">
         🔥 Latest News Updates 🔥 🔥 Latest News Updates 🔥 🔥 Latest News Updates 🔥
       </marquee>
@@ -75,24 +88,30 @@ function App() {
 
       {error && <p className="text-red-400 mt-2">{error}</p>}
 
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
-        {news.length > 0 ? (
-          news.map((item, index) => (
-            <div
-              key={index}
-              className="bg-gray-800 p-4 rounded-xl shadow-lg hover:scale-105 transition"
-            >
-              <h2 className="text-lg font-semibold mt-3">{item.title}</h2>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-300 col-span-3 text-center">No news available</p>
-        )}
-      </div>
-      <footer className="w-full mt-auto py-4 bg-gray-800 text-center text-gray-400">
-  Designed & Developed with❤️ by <span className="text-white font-semibold">Prabhat Yadav</span>
-</footer>
+  
+      {loading && (
+        <div className="mt-4 text-center">
+          <p className="text-lg font-semibold">Fetching news... ⏳ {countdown}s</p>
+        </div>
+      )}
 
+    
+      {!loading && (
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
+          {news.length > 0 ? (
+            news.map((item, index) => (
+              <div
+                key={index}
+                className="bg-gray-800 p-4 rounded-xl shadow-lg hover:scale-105 transition"
+              >
+                <h2 className="text-lg font-semibold mt-3">{item.title}</h2>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-300 col-span-3 text-center">No news available</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
