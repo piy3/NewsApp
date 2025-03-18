@@ -27,7 +27,7 @@ function App() {
     }
     setError("");
     setLoading(true);
-    setCountdown(50); 
+    setCountdown(20); 
 
     try {
       const formattedState = formatStateName(state);
